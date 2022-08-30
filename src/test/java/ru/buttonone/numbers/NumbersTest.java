@@ -2,6 +2,8 @@ package ru.buttonone.numbers;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +13,7 @@ public class NumbersTest {
     public static final String NUMBERS_URL_MATH = "http://numbersapi.com/#5/math";
     public static final String NUMBERS_URL_DATE = "http://numbersapi.com/#8/29/date";
     public static final String HTTP_200_OK = "HTTP/1.1 200 OK";
+    public static final String CONTENT_TYPE = "text/html; charset=utf-8";
 
     @DisplayName("Checking the correctness of the Content-Type field display")
     @Test
@@ -48,7 +51,7 @@ public class NumbersTest {
 
     @DisplayName("Checking whether the Content Type field is displayed correctly in the Mathematics section")
     @Test
-    public void shouldHaveCorrectGetMth() {
+    public void shouldHaveCorrectGetMath5() {
 
         RestAssured
                 .given()
@@ -156,6 +159,28 @@ public class NumbersTest {
                 .then()
                 .log().all()
                 .statusCode(404);
+    }
+
+    @DisplayName("Must have the correct math number 5 status line")
+    @Test
+    public void shouldHaveCorrectStatusCodeMath5() {
+
+        Response response = RestAssured.given().get("http://numbersapi.com/#5/math");
+
+        System.out.println("response.statusLine() = " + response.statusLine());
+
+        Assertions.assertEquals(HTTP_200_OK, response.statusLine());
+    }
+
+    @DisplayName("Must have the correct content type date 8/30")
+    @Test
+    public void shouldHaveCorrectContentTypeDate8_30() {
+
+        Response response = RestAssured.given().get("http://numbersapi.com/#8/30/date");
+
+        System.out.println("response.contentType() = " + response.contentType());
+
+        Assertions.assertEquals(CONTENT_TYPE, response.contentType());
     }
 }
 
