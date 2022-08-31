@@ -17,7 +17,6 @@ import static ru.buttonone.specification.NumbersSpecifications.*;
 public class NumbersTest {
 
     public static final String NUMBERS_URL = "http://numbersapi.com";
-    public static final String ID_PATH = "/{id}";
     public static final String NUMBERS_URL_MATH = "http://numbersapi.com/#5/math";
     public static final String NUMBERS_URL_DATE = "http://numbersapi.com/#8/29/date";
     public static final String HTTP_200_OK = "HTTP/1.1 200 OK";
