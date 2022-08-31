@@ -1,8 +1,13 @@
 package ru.buttonone.numbers;
 
 import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+import io.restassured.specification.ResponseSpecification;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +15,7 @@ import org.junit.jupiter.api.Test;
 public class NumbersTest {
 
     public static final String NUMBERS_URL = "http://numbersapi.com";
+    public static final String ID_PATH = "/{id}";
     public static final String NUMBERS_URL_MATH = "http://numbersapi.com/#5/math";
     public static final String NUMBERS_URL_DATE = "http://numbersapi.com/#8/29/date";
     public static final String HTTP_200_OK = "HTTP/1.1 200 OK";
@@ -28,7 +34,9 @@ public class NumbersTest {
         RestAssured
                 .given()
                 .baseUri(NUMBERS_URL)
-                .get("/2")
+                .when()
+                .param("id", 3)
+                //.get("/2")
                 .then()
                 .contentType(ContentType.TEXT)
                 .log().all()
@@ -42,6 +50,7 @@ public class NumbersTest {
         RestAssured
                 .given()
                 .baseUri(NUMBERS_URL)
+                .when()
                 .get("/5/math")
                 .then()
                 .contentType(ContentType.TEXT)
@@ -56,6 +65,7 @@ public class NumbersTest {
         RestAssured
                 .given()
                 .baseUri(NUMBERS_URL)
+                .when()
                 .get("/5/math")
                 .then()
                 .contentType(ContentType.TEXT)
@@ -70,6 +80,7 @@ public class NumbersTest {
         RestAssured
                 .given()
                 .baseUri(NUMBERS_URL)
+                .when()
                 .get("/8/29/date")
                 .then()
                 .contentType(ContentType.TEXT)
@@ -83,6 +94,8 @@ public class NumbersTest {
 
         RestAssured
                 .given()
+                .and()
+                .when()
                 .options(NUMBERS_URL)
                 .then()
                 .log().all();
@@ -94,6 +107,8 @@ public class NumbersTest {
 
         RestAssured
                 .given()
+                .and()
+                .when()
                 .head(NUMBERS_URL)
                 .then()
                 .log().all()
@@ -106,6 +121,8 @@ public class NumbersTest {
 
         RestAssured
                 .given()
+                .and()
+                .when()
                 .head(NUMBERS_URL_DATE)
                 .then()
                 .log().all()
@@ -118,6 +135,8 @@ public class NumbersTest {
 
         RestAssured
                 .given()
+                .and()
+                .when()
                 .head(NUMBERS_URL_MATH)
                 .then()
                 .log().all()
@@ -129,6 +148,9 @@ public class NumbersTest {
     public void shouldHaveCorrectGetNumbersUrl() {
 
         RestAssured
+                .given()
+                .baseUri(NUMBERS_URL)
+                .when()
                 .get(NUMBERS_URL)
                 .then()
                 .log().all()
@@ -142,6 +164,7 @@ public class NumbersTest {
         RestAssured
                 .given()
                 .baseUri(NUMBERS_URL)
+                .when()
                 .head()
                 .then()
                 .statusLine(HTTP_200_OK)
@@ -155,7 +178,39 @@ public class NumbersTest {
 
         RestAssured
                 .given()
+                .and()
+                .when()
                 .delete(NUMBERS_URL)
+                .then()
+                .log().all()
+                .statusCode(404);
+    }
+
+    @DisplayName("Checking the correctness of the request math")
+    @Test
+    public void shouldHaveCorrectRequestMath() {
+
+        RestAssured
+                .given()
+                .header("Accept-Language", "ru")
+                .baseUri(NUMBERS_URL)
+                .when()
+                .get("/t/math")
+                .then()
+                .log().all()
+                .statusCode(404);
+    }
+
+    @DisplayName("Checking the correctness of the request date")
+    @Test
+    public void shouldHaveCorrectRequestDate() {
+
+        RestAssured
+                .given()
+                .header("Accept-Language", "ru")
+                .baseUri(NUMBERS_URL)
+                .when()
+                .get("/date")
                 .then()
                 .log().all()
                 .statusCode(404);
@@ -165,7 +220,7 @@ public class NumbersTest {
     @Test
     public void shouldHaveCorrectStatusCodeMath5() {
 
-        Response response = RestAssured.given().get("http://numbersapi.com/#5/math");
+        Response response = RestAssured.given().get("http://numbersapi.com/#99999999/math");
 
         System.out.println("response.statusLine() = " + response.statusLine());
 
@@ -181,6 +236,88 @@ public class NumbersTest {
         System.out.println("response.contentType() = " + response.contentType());
 
         Assertions.assertEquals(CONTENT_TYPE, response.contentType());
+    }
+
+    @DisplayName("Checking the correctness of the Content-Type field display")
+    @Test
+    public void shouldHaveCorrect() {
+
+        RequestSpecification requestSpecification = new RequestSpecBuilder()
+                .addHeader("Accept-Language", "ru")
+                .setBaseUri(NUMBERS_URL)
+                .build();
+
+        ResponseSpecification responseSpecification = new ResponseSpecBuilder()
+                .log(LogDetail.ALL)
+                .expectStatusCode(200)
+                .build();
+
+        RestAssured
+                .given()
+                .spec(requestSpecification)
+                .baseUri(NUMBERS_URL)
+                //.param("id", 2)
+                .when()
+                //.get()
+                .get("/2")
+                .then()
+                .spec(responseSpecification);
+        //.contentType(ContentType.TEXT)
+        //.log().all()
+        //.header("Content-Length", "67")
+        //.statusCode(200);
+    }
+
+    @DisplayName("The check must have the correct Api type Date")
+    @Test
+    public void shouldHaveCorrectNumbersApiTypeMath() {
+
+        RestAssured
+                .given()
+                .header("Accept-Language", "ru")
+                .baseUri(NUMBERS_URL)
+                .when()
+                .get("/2/math")
+                .then()
+                .contentType(ContentType.TEXT)
+                .log().all()
+                .header("X-Numbers-API-Type", "math")
+                .statusCode(200);
+    }
+
+    @DisplayName("The check must have the correct Api type Date")
+    @Test
+    public void shouldHaveCorrectApiTypeDate() {
+
+        RestAssured
+                .given()
+                .header("Accept-Language", "ru")
+                .baseUri(NUMBERS_URL)
+                .when()
+                .get("/8/29/date")
+                .then()
+                .contentType(ContentType.TEXT)
+                .log().all()
+                .header("X-Numbers-API-Type", "date")
+                .statusCode(200);
+    }
+
+    @DisplayName("Checking that the correct connection is correct")
+    @Test
+    public void shouldHaveCorrectConnection() {
+
+        RestAssured
+                .given()
+                .header("Content-Type", "text/plain; charset=utf-8")
+                .baseUri(NUMBERS_URL)
+                .pathParam("id","8")
+                .when()
+                .get(ID_PATH)
+                .then()
+                .contentType(ContentType.TEXT)
+                .log().all()
+                .header("Connection", "keep-alive")
+                .statusCode(200);
     }
 }
 
