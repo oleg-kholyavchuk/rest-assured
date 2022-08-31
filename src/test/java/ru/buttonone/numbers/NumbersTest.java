@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static ru.buttonone.specification.NumbersSpecifications.*;
+
 public class NumbersTest {
 
     public static final String NUMBERS_URL = "http://numbersapi.com";
@@ -34,13 +36,14 @@ public class NumbersTest {
         RestAssured
                 .given()
                 .baseUri(NUMBERS_URL)
+                .pathParam("id", 3)
                 .when()
-                .param("id", 3)
-                //.get("/2")
+                .get("/{id}")
                 .then()
                 .contentType(ContentType.TEXT)
-                .log().all()
-                .statusCode(200);
+//                .log().all()
+//                .statusCode(200);
+                .spec(defaultResponseSpecification(200));
     }
 
     @DisplayName("Checking whether the Content Type field is displayed correctly in the Mathematics section")
@@ -54,8 +57,9 @@ public class NumbersTest {
                 .get("/5/math")
                 .then()
                 .contentType(ContentType.TEXT)
-                .log().all()
-                .statusCode(200);
+//                .log().all()
+//                .statusCode(200);
+                .spec(defaultResponseSpecification(200));
     }
 
     @DisplayName("Checking whether the Content Type field is displayed correctly in the Mathematics section")
@@ -69,8 +73,9 @@ public class NumbersTest {
                 .get("/5/math")
                 .then()
                 .contentType(ContentType.TEXT)
-                .log().all()
-                .statusCode(200);
+//                .log().all()
+//                .statusCode(200);
+                .spec(defaultResponseSpecification(200));
     }
 
     @DisplayName("Checking whether the Content Type field is displayed correctly in the dates section")
@@ -84,8 +89,9 @@ public class NumbersTest {
                 .get("/8/29/date")
                 .then()
                 .contentType(ContentType.TEXT)
-                .log().all()
-                .statusCode(200);
+//                .log().all()
+//                .statusCode(200);
+                .spec(defaultResponseSpecification(200));
     }
 
     @DisplayName("Checking for the correct options")
@@ -111,8 +117,9 @@ public class NumbersTest {
                 .when()
                 .head(NUMBERS_URL)
                 .then()
-                .log().all()
-                .statusCode(200);
+//                .log().all()
+//                .statusCode(200);
+                .spec(defaultResponseSpecification(200));
     }
 
     @DisplayName("Checking for the correct head date")
@@ -125,8 +132,9 @@ public class NumbersTest {
                 .when()
                 .head(NUMBERS_URL_DATE)
                 .then()
-                .log().all()
-                .statusCode(200);
+//                .log().all()
+//                .statusCode(200);
+                .spec(defaultResponseSpecification(200));
     }
 
     @DisplayName("Checking for the correct head math")
@@ -139,8 +147,9 @@ public class NumbersTest {
                 .when()
                 .head(NUMBERS_URL_MATH)
                 .then()
-                .log().all()
-                .statusCode(200);
+//                .log().all()
+//                .statusCode(200);
+                .spec(defaultResponseSpecification(200));
     }
 
     @DisplayName("Checking the NUMBERS_URL is correct")
@@ -153,8 +162,9 @@ public class NumbersTest {
                 .when()
                 .get(NUMBERS_URL)
                 .then()
-                .log().all()
-                .statusCode(200);
+//                .log().all()
+//                .statusCode(200);
+                .spec(defaultResponseSpecification(200));
     }
 
     @DisplayName("Checking have correct head status line")
@@ -168,8 +178,9 @@ public class NumbersTest {
                 .head()
                 .then()
                 .statusLine(HTTP_200_OK)
-                .log().all()
-                .statusCode(200);
+//                .log().all()
+//                .statusCode(200);
+                .spec(defaultResponseSpecification(200));
     }
 
     @DisplayName("Checking if the url can be deleted")
@@ -182,8 +193,9 @@ public class NumbersTest {
                 .when()
                 .delete(NUMBERS_URL)
                 .then()
-                .log().all()
-                .statusCode(404);
+//                .log().all()
+//                .statusCode(404);
+                .spec(defaultResponseSpecification(404));
     }
 
     @DisplayName("Checking the correctness of the request math")
@@ -192,13 +204,15 @@ public class NumbersTest {
 
         RestAssured
                 .given()
-                .header("Accept-Language", "ru")
-                .baseUri(NUMBERS_URL)
+                .spec(defaultRequestSpecificationDateAndMath("Accept-Language", "ru", "/t/math"))
+                //.header("Accept-Language", "ru")
+                //.baseUri(NUMBERS_URL)
                 .when()
-                .get("/t/math")
+                .get(idDate)
                 .then()
-                .log().all()
-                .statusCode(404);
+//                .log().all()
+//                .statusCode(404);
+                .spec(defaultResponseSpecification(404));
     }
 
     @DisplayName("Checking the correctness of the request date")
@@ -207,13 +221,15 @@ public class NumbersTest {
 
         RestAssured
                 .given()
-                .header("Accept-Language", "ru")
-                .baseUri(NUMBERS_URL)
+                .spec(defaultRequestSpecificationDateAndMath("Accept-Language", "ru", "/date"))
+//                .header("Accept-Language", "ru")
+//                .baseUri(NUMBERS_URL)
                 .when()
-                .get("/date")
+                .get(idDate)
                 .then()
-                .log().all()
-                .statusCode(404);
+//                .log().all()
+//                .statusCode(404);
+                .spec(defaultResponseSpecification(404));
     }
 
     @DisplayName("Must have the correct math number 5 status line")
@@ -255,10 +271,10 @@ public class NumbersTest {
         RestAssured
                 .given()
                 .spec(requestSpecification)
-                .baseUri(NUMBERS_URL)
+                //.baseUri(NUMBERS_URL)
                 //.param("id", 2)
                 .when()
-                //.get()
+                //.get(ID_PATH)
                 .get("/2")
                 .then()
                 .spec(responseSpecification);
@@ -274,15 +290,18 @@ public class NumbersTest {
 
         RestAssured
                 .given()
-                .header("Accept-Language", "ru")
-                .baseUri(NUMBERS_URL)
+                .spec(defaultRequestSpecificationDateAndMath("Accept-Language", "ru", "/2/math"))
+//                .header("Accept-Language", "ru")
+//                .baseUri(NUMBERS_URL)
                 .when()
-                .get("/2/math")
+                .get(idDate)
+//                .get("/2/math")
                 .then()
-                .contentType(ContentType.TEXT)
-                .log().all()
-                .header("X-Numbers-API-Type", "math")
-                .statusCode(200);
+//                .contentType(ContentType.TEXT)
+//                .log().all()
+//                .header("X-Numbers-API-Type", "math")
+//                .statusCode(200);
+                .spec(defaultResponseSpecification("X-Numbers-API-Type", "math", 200));
     }
 
     @DisplayName("The check must have the correct Api type Date")
@@ -291,15 +310,18 @@ public class NumbersTest {
 
         RestAssured
                 .given()
-                .header("Accept-Language", "ru")
-                .baseUri(NUMBERS_URL)
+                .spec(defaultRequestSpecificationDateAndMath("Content-Type", "text/plain; charset=utf-8", "/8/29/date"))
+//                .header("Accept-Language", "ru")
+//                .baseUri(NUMBERS_URL)
                 .when()
-                .get("/8/29/date")
+                .get(idDate)
+//                .get("/8/29/date")
                 .then()
-                .contentType(ContentType.TEXT)
-                .log().all()
-                .header("X-Numbers-API-Type", "date")
-                .statusCode(200);
+//                .contentType(ContentType.TEXT)
+//                .log().all()
+//                .header("X-Numbers-API-Type", "date")
+//                .statusCode(200)
+                .spec(defaultResponseSpecification("X-Numbers-API-Type", "date", 200));
     }
 
     @DisplayName("Checking that the correct connection is correct")
@@ -308,16 +330,31 @@ public class NumbersTest {
 
         RestAssured
                 .given()
-                .header("Content-Type", "text/plain; charset=utf-8")
-                .baseUri(NUMBERS_URL)
-                .pathParam("id","8")
+                //.header("Content-Type", "text/plain; charset=utf-8")
+                //.baseUri(NUMBERS_URL)
+                //.pathParam("id", "8")
+                .spec(defaultRequestSpecification("Content-Type", "text/plain; charset=utf-8", 8))
                 .when()
-                .get(ID_PATH)
+                .get(String.valueOf(id))
                 .then()
-                .contentType(ContentType.TEXT)
-                .log().all()
-                .header("Connection", "keep-alive")
-                .statusCode(200);
+                //.contentType(ContentType.TEXT)
+                //.log().all()
+                //.header("Connection", "keep-alive")
+                //.statusCode(200);
+                .spec(defaultResponseSpecification("Connection", "keep-alive", 200));
+    }
+
+    @DisplayName("Checking the correctness of methods working through a class")
+    @Test
+    public void shouldHaveCorrectMethodThroughClass() {
+
+        RestAssured
+                .given()
+                .spec(defaultRequestSpecification("Accept-Language", "fr", 100))
+                .when()
+                .get(String.valueOf(id))
+                .then()
+                .spec(defaultResponseSpecification("Connection", "keep-alive", 200));
     }
 }
 
