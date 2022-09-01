@@ -11,11 +11,11 @@ public class NumbersSpecifications {
 
     public static final String NUMBERS_URI = "http://numbersapi.com";
     public static int id;
-    public static String idDate;
+    public static String idData;
 
-    public static RequestSpecification defaultRequestSpecification(String headerName, String headerValue, int idTest) {
+    public static RequestSpecification defaultRequestSpecification(String headerName, String headerValue, int testID) {
 
-        id = idTest;
+        id = testID;
 
         return new RequestSpecBuilder()
                 .addHeader(headerName, headerValue)
@@ -26,7 +26,7 @@ public class NumbersSpecifications {
 
     public static RequestSpecification defaultRequestSpecificationDateAndMath(String headerName, String headerValue, String date) {
 
-        idDate = date;
+        idData = date;
 
         return new RequestSpecBuilder()
                 .addHeader(headerName, headerValue)
